@@ -1,0 +1,93 @@
+Visualization 1: Release Count by year (1922-2022)
+
+CREATE TABLE timechart
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/'
+AS
+SELECT release_date, COUNT(release_id) AS release_count
+FROM plzwork
+WHERE release_date >= 1922
+AND release_date <= 2022
+AND country IN ('US','UK','Germany','Japan','France','Italy','Canada','Netherlands','Spain','Australia')
+GROUP BY release_date
+ORDER BY release_count DESC;
+
+Visualization 2: Release Count by Country (1922-2022)
+
+CREATE TABLE countrydatecount
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/'
+AS
+SELECT country, COUNT(release_id) AS release_count FROM plzwork
+WHERE release_date >= 1922
+AND release_date <= 2022
+AND country IN ('US','UK', 'Germany', 'Japan', 'France','Italy', 'Canada', 'Netherlands', 'Spain', 'Australia')
+GROUP BY country
+ORDER BY release_count DESC;
+
+Visualization 3: Geomap of the World
+
+CREATE EXTERNAL TABLE IF NOT EXISTS country_yearly_genre_analysis (year DATE, country STRING, genre STRING, genre_count BIGINT) 
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
+STORED AS TEXTFILE LOCATION '/user/gmunoz58/CountryYearlyGenreAnalysis/’;
+INSERT OVERWRITE TABLE country_yearly_genre_analysis 
+SELECT CONCAT(release_date, '-01-01') 
+AS year, country, genre, genre_count 
+FROM ( SELECT release_date, country, genre, count() AS genre_count, RANK() OVER(PARTITION BY country, release_date 
+ORDER BY count() DESC) AS genre_ranks FROM plzwork WHERE release_date >= 1922 AND release_date <= 2022 
+AND country IN ('US','UK','Germany','Japan','France','Italy','Canada','Netherlands','Spain','Australia') 
+GROUP BY release_date, country, genre) AS ranked_genres_yearly 
+WHERE genre_ranks <= 5 
+ORDER BY release_date, country, genre_ranks;
+
+Visualization 4: Total Release Count by Genre and Genres by Release Count
+﻿CREATE TABLE genrecounts
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/' 
+AS
+SELECT
+genre,
+COUNT(release_id) AS release_count
+FROM
+plzwork
+GROUP BY
+genre 
+ORDER BY
+release_count DESC;
+
+Visualization 5: Music Format by Rock Genre
+
+﻿CREATE TABLE rockcount
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/' 
+AS
+SELECT format, COUNT(release_id) AS release_count 
+FROM plzwork
+WHERE genre='Rock'
+GROUP BY format
+ORDER BY release_count DESC;
+
+Visualization 6: Music Format by Electronic Genre
+
+﻿CREATE TABLE electroniccount
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/' 
+AS
+SELECT format, COUNT(release_id) AS release_count 
+FROM plzwork
+WHERE genre='Electronic'
+GROUP BY format
+ORDER BY release_count DESC;
+
+Visualization 7: Music Format by Pop Genre
+
+CREATE TABLE popcount
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/' 
+AS
+SELECT format, COUNT(release_id) AS release_count
+FROM plzwork
+WHERE genre='Pop'
+GROUP BY format
+ORDER BY release_count DESC;
+
