@@ -1,0 +1,13 @@
+﻿
+
+CREATE TABLE timechart
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+STORED AS TEXTFILE LOCATION '/user/mmiran64/test/'
+AS
+SELECT release_date, COUNT(release_id) AS release_count
+FROM plzwork
+WHERE release_date >= 1922
+AND release_date <= 2022
+AND country IN ('US','UK','Germany','Japan','France','Italy','Canada','Netherlands','Spain','Australia')
+GROUP BY release_date
+ORDER BY release_count DESC;
