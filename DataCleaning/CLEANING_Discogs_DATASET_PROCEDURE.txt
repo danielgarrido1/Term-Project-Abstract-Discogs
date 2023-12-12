@@ -1,0 +1,43 @@
+CLEANING Discogs DATASET PROCEDURE
+----------------------------------
+
+Step 0: Download dataset from Kaggle
+Link --> https://www.kaggle.com/datasets/ofurkancoban/discogs-releases-dataset
+
+Step 1: Open Git Bash and secure copy "archive.zip" folder to home directory in Linux server
+Terminal command > scp C:/Users/Giovanni/Downloads/archive.zip gmunoz58@129.146.90.117:/home/gmunoz58/
+
+Step 2: Login to Linux server
+Terminal command > ssh gmunoz58@129.146.90.117
+
+Step 3: Check for file, if exist unzip file
+Bash command > ls
+Bash command > unzip archive.zip
+
+Step 4: Remove archive.zip and SQL file
+Bash command > rm archive.zip discogs.sql
+
+Step 5: Remove all "|" (pipe) characters from discogs.csv file
+Bash command > sed -i 's/|//g' discogs.csv
+Resource: https://www.howtogeek.com/666395/how-to-use-the-sed-command-on-linux/
+
+Step 6: Make sure no "|" characters exist in file, next line should return 0
+Bash command > grep -c '|' discogs.csv
+Resource: https://www.geeksforgeeks.org/grep-command-in-unixlinux/
+
+Step 7: Exit Linux server, then secure copy 'discogs.csv' file to local machine
+Bash command > exit
+Terminal command > scp gmunoz58@129.146.90.117:/home/gmunoz58/discogs.csv .
+
+Step 8: Download CSViewer 
+Link --> https://csviewer.com/
+
+Step 9: Open CSViewer, click "Import text file", select "discogs.csv", click 'Columns' tab, check 'Load only selected columns' and check the following:
+'id' 'release_id' 'status' 'title' 'artist_id' 'artist_name' 'label_name' 'label_id' 'format' 'genre' 'style' 'country' 'release_date' 'master_id' 'company_name' 
+then click 'Load'
+
+Step 10: Click 'Export', change 'Separator' to Pipe, change 'Wrap in quotes' to Nothing, export as 'cleanDiscogs' csv file
+
+Step 11: Open Git Bash, and secure copy 'cleanDiscogs.csv' file from local machine to Linux server
+Terminal command > scp C:/Users/Giovanni/cleanDiscogs.csv gmunoz58@129.146.90.117:/home/gmunoz58/
+
