@@ -1,3 +1,32 @@
+Create Group5 database
+
+CREATE DATABASE if not exists group5;
+show databases;
+use group5;
+
+Create table from dataset
+
+CREATE EXTERNAL TABLE IF NOT EXISTS plzwork( 
+id STRING, 
+release_id STRING, 
+status STRING, 
+title STRING, 
+artist_id STRING, 
+artist_name STRING, 
+label_name STRING, 
+label_id STRING, 
+format STRING, 
+genre STRING, 
+style STRING, 
+country STRING, 
+release_date STRING, 
+master_id STRING, 
+company_name STRING) 
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
+STORED AS TEXTFILE LOCATION '/user/gmunoz58/DiscogsDataset/newdelim' 
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+
 Visualization 1: Release Count by year (1922-2022)
 
 CREATE TABLE timechart
